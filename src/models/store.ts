@@ -15,7 +15,7 @@ const storeSchema = new mongoose.Schema({
     offers: [{type: String, required: true }],
     menuItems: [menuItemSchema],
     imageUrl: {type: String, required: true},
-    lastUpdated: {type: Date, required: true},
+    lastUpdated: {type: Date, required: true}
 });
 
 const Store = mongoose.model("Store", storeSchema);
