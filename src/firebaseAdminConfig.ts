@@ -4,7 +4,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 // Koristi path.join za izgradnju putanje
-const serviceAccountPath = path.join(__dirname, '../config/firebase/serviceAccountKey.json');
+const serviceAccountPath = path.join(__dirname, './config/firebase/serviceAccountKey.json');
 
 // Proveri da li fajl postoji na izgradjenoj putanji
 if (!fs.existsSync(serviceAccountPath)) {
