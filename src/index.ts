@@ -14,7 +14,7 @@ const corsOptions = {
     allowedHeaders: ['Content-Type', 'Authorization']
 };
 app.use(express.json());
-app.use(corsOptions());
+app.use(cors(corsOptions));
 
 app.get("/health", async (req:Request, res:Response) => {
     res.send({message:"health OK!"});
