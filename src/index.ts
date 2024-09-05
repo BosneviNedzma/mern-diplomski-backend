@@ -8,8 +8,13 @@ import myStoreRoute from "./routes/MyStoreRoute";
 mongoose.connect(process.env.MONGODB_CONNECTION_STRING as string).then(()=> console.log("Connected to database."));
 
 const app = express();
+const corsOptions = {
+    origin: 'https://mern-epijaca-frontend.onrender.com', // Dozvoli samo ovaj domen
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+};
 app.use(express.json());
-app.use(cors());
+app.use(corsOptions());
 
 app.get("/health", async (req:Request, res:Response) => {
     res.send({message:"health OK!"});
