@@ -1,6 +1,22 @@
 import { Request, Response } from "express";
 import Store from "../models/store";
 
+const getStore = async (req: Request, res: Response) => {
+    try {
+        const storeId = req.params.storeId;
+
+        const store = await Store.findById(storeId);
+        if(!store){
+            return res.status(404).json({message: "Prodavnica nije pronađena."});
+        }
+
+        res.json(store);
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({message: "Nešto nije u redu."});
+    }
+}
+
 const searchStore = async (req: Request, res: Response) => {
     try {
         const city = req.params.city;
@@ -66,5 +82,6 @@ const searchStore = async (req: Request, res: Response) => {
 };
 
 export default {
+    getStore,
     searchStore
 }
