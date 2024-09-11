@@ -14,6 +14,8 @@ const upload = multer({
     },
 });
 
+router.get("/order", jwtCheck, jwtParse, MyStoreController.getMyStoreOrders);
+router.patch("/order/:orderId/status", jwtCheck, jwtParse, MyStoreController.updateOrderStatus);
 router.get("/", jwtCheck, jwtParse, MyStoreController.getMyStore);
 
 router.post("/", upload.single("imageFile"),

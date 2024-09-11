@@ -12,7 +12,7 @@ mongoose.connect(process.env.MONGODB_CONNECTION_STRING as string).then(() => con
 const app = express();
 const corsOptions = {
     origin: ['https://mern-epijaca-frontend.onrender.com', 'http://localhost:5173'],
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization']
 };
 

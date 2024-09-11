@@ -9,16 +9,15 @@ const STRIPE_ENDPOINT_SECRET = process.env.STRIPE_WEBHOOK_SECRET as string;
 
 const getMyOrders = async (req: Request, res: Response) => {
     try {
-        const orders = await Order.find({ user: req.userId })
-            .populate("store")
-            .populate("user");
+        const orders = await Order.find({ user: req.userId }).
+            populate("store").populate("user");
 
         res.json(orders);
     } catch (error) {
         console.log(error);
-        res.status(500).json({ message: "something went wrong" });
+        res.status(500).json({ message: "Nešto nije u redu." });
     }
-};
+}
 
 type CheckoutSessionRequest = {
     cartItems: {
@@ -58,7 +57,7 @@ const stripeWebhookHandler = async (req: Request, res: Response) => {
         }
 
         order.totalAmount = event.data.object.amount_total;
-        order.status = "paid";
+        order.status = "plaćena";
 
         await order.save();
     }
@@ -81,7 +80,7 @@ const createCheckoutSession = async (req: Request, res: Response) => {
         const newOrder = new Order({
             store: store,
             user: req.userId,
-            status: "placed",
+            status: "postavljena",
             deliveryDetails: checkoutSessionRequest.deliveryDetails,
             cartItems: checkoutSessionRequest.cartItems,
             createdAt: new Date(),

@@ -6,6 +6,7 @@ import { log } from 'console';
 
 import multer from 'multer';
 import express from 'express';
+import Order from '../models/order';
 
 const upload = multer();
 const app = express();
@@ -30,18 +31,18 @@ const createMyStore = async (req: Request, res: Response) => {
     if (existingStore) {
       return res.status(409).json({ message: 'Prodavnica je već registrovana.' });
     }
-      const imageUrl = await uploadImage(req.file as Express.Multer.File);
+    const imageUrl = await uploadImage(req.file as Express.Multer.File);
 
-      const store = new Store({
-        ...req.body,
-        imageUrl: imageUrl,
-        user: new mongoose.Types.ObjectId(req.userId),
-        lastUpdated: new Date()
-      });
+    const store = new Store({
+      ...req.body,
+      imageUrl: imageUrl,
+      user: new mongoose.Types.ObjectId(req.userId),
+      lastUpdated: new Date()
+    });
 
-      await store.save();
+    await store.save();
 
-      res.status(201).send(store);
+    res.status(201).send(store);
 
   } catch (error) {
     console.log(error);
@@ -49,14 +50,14 @@ const createMyStore = async (req: Request, res: Response) => {
   }
 };
 
-const updateMyStore = async (req: Request, res: Response)=> {
+const updateMyStore = async (req: Request, res: Response) => {
   try {
     const store = await Store.findOne({
       user: req.userId,
     });
 
-    if(!store){
-      return res.status(404).json({message: "Prodavnica nije pronađena."});
+    if (!store) {
+      return res.status(404).json({ message: "Prodavnica nije pronađena." });
     }
 
     store.storeName = req.body.storeName;
@@ -68,7 +69,7 @@ const updateMyStore = async (req: Request, res: Response)=> {
     store.menuItems = req.body.menuItems;
     store.lastUpdated = new Date();
 
-    if(req.file){
+    if (req.file) {
       const imageUrl = await uploadImage(req.file as Express.Multer.File);
       store.imageUrl = imageUrl;
     }
@@ -77,7 +78,49 @@ const updateMyStore = async (req: Request, res: Response)=> {
     res.status(200).send(store);
   } catch (error) {
     console.log("error", error);
-    res.status(500).json({message: "Nešto nije u redu"});
+    res.status(500).json({ message: "Nešto nije u redu" });
+  }
+}
+
+const getMyStoreOrders = async (req: Request, res: Response) => {
+  try {
+    const store = await Store.findOne({ user: req.userId });
+    if (!store) {
+      return res.status(404).json({ message: "eProdavnica nije nađena." });
+    }
+
+    const orders = await Order.find({ store: store._id }).populate("store").populate("user");
+
+    res.json(orders);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Nešto nije u redu" });
+  }
+};
+
+const updateOrderStatus = async (req: Request, res: Response) => {
+  try {
+    const { orderId } = req.params;
+    const { status } = req.body;
+
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res.status(404).json({ message: "Narudžba nije pronađena." });
+    }
+
+    const store = await Store.findById(order.store);
+
+    if (store?.user?._id.toString() !== req.userId) {
+      return res.status(401).send();
+    }
+
+    order.status = status;
+    await order.save();
+
+    res.status(200).json(order);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Nije moguće ažurirati stanje narudžbe." });
   }
 }
 
@@ -100,6 +143,8 @@ const uploadImage = async (file: Express.Multer.File): Promise<string> => {
 };
 
 export default {
+  updateOrderStatus,
+  getMyStoreOrders,
   getMyStore,
   createMyStore,
   updateMyStore,
