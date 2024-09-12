@@ -1,19 +1,20 @@
 import { Request, Response } from "express";
+
 import Store from "../models/store";
 
 const getStore = async (req: Request, res: Response) => {
     try {
         const storeId = req.params.storeId;
-
         const store = await Store.findById(storeId);
-        if(!store){
-            return res.status(404).json({message: "Prodavnica nije pronađena."});
+
+        if (!store) {
+            return res.status(404).json({ message: "Prodavnica nije pronađena." });
         }
 
         res.json(store);
     } catch (error) {
         console.log(error);
-        res.status(500).json({message: "Nešto nije u redu."});
+        res.status(500).json({ message: "Nešto nije u redu." });
     }
 }
 
@@ -44,7 +45,6 @@ const searchStore = async (req: Request, res: Response) => {
 
         if (selectedCuisines) {
             const cuisinesArray = selectedCuisines.split(",").map((cuisine) => new RegExp(cuisine, "i"));
-
             query["cuisines"] = { $ali: cuisinesArray };
         }
 
@@ -74,7 +74,6 @@ const searchStore = async (req: Request, res: Response) => {
         };
 
         res.json(response);
-
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Nešto nije u redu." });

@@ -1,8 +1,9 @@
+import { validateMyStoreRequest } from '../middleware/validation';
+import { jwtCheck, jwtParse } from '../middleware/auth';
+
+import MyStoreController from '../controllers/MyStoreController';
 import express from 'express';
 import multer from 'multer';
-import { jwtCheck, jwtParse } from '../middleware/auth';
-import MyStoreController from '../controllers/MyStoreController';
-import { validateMyStoreRequest } from '../middleware/validation';
 
 const router = express.Router();
 

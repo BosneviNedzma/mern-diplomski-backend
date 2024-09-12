@@ -1,6 +1,7 @@
-import Stripe from "stripe";
-import { Request, Response } from "express";
 import Store, { MenuItemType } from "../models/store";
+import { Request, Response } from "express";
+
+import Stripe from "stripe";
 import Order from "../models/order";
 
 const STRIPE = new Stripe(process.env.STRIPE_API_KEY as string);
@@ -53,7 +54,7 @@ const stripeWebhookHandler = async (req: Request, res: Response) => {
         const order = await Order.findById(event.data.object.metadata?.orderId);
 
         if (!order) {
-            return res.status(404).json({ message: "Order not found" });
+            return res.status(404).json({ message: "Narudžba nije pronađena." });
         }
 
         order.totalAmount = event.data.object.amount_total;
@@ -99,7 +100,7 @@ const createCheckoutSession = async (req: Request, res: Response) => {
         );
 
         if (!session.url) {
-            return res.status(500).json({ message: "Error creating stripe session" });
+            return res.status(500).json({ message: "Greška pri kreiranju sesije za Stripe." });
         }
 
         await newOrder.save();
@@ -125,7 +126,7 @@ const createLineItems = (
 
         const line_item: Stripe.Checkout.SessionCreateParams.LineItem = {
             price_data: {
-                currency: "gbp",
+                currency: "bam",
                 unit_amount: menuItem.price,
                 product_data: {
                     name: menuItem.name,
@@ -155,7 +156,7 @@ const createSession = async (
                     type: "fixed_amount",
                     fixed_amount: {
                         amount: deliveryPrice,
-                        currency: "gbp",
+                        currency: "bam",
                     },
                 },
             },

@@ -1,24 +1,24 @@
-import mongoose, { mongo } from "mongoose";
+import mongoose from "mongoose";
 
 const userSchema = new mongoose.Schema({
-    auth0Id:{
+    auth0Id: {
         type: String,
         required: true,
     },
-    email:{
+    email: {
         type: String,
         required: true,
     },
-    name:{
+    name: {
         type: String,
     },
-    addressLine1:{
+    addressLine1: {
         type: String,
     },
-    city:{
+    city: {
         type: String,
     },
-    country:{
+    country: {
         type: String,
     }
 });

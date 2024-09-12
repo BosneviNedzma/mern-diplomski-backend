@@ -1,6 +1,7 @@
-import express from "express";
 import { param } from "express-validator";
+
 import StoreController from "../controllers/StoreController";
+import express from "express";
 
 const router = express.Router();
 

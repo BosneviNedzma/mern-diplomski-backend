@@ -1,22 +1,18 @@
 import { Request, Response } from 'express';
-import mongoose from 'mongoose';
+
 import bucket from '../firebaseAdminConfig';
-import Store from '../models/store';
-import { log } from 'console';
-
-import multer from 'multer';
-import express from 'express';
 import Order from '../models/order';
-
-const upload = multer();
-const app = express();
+import Store from '../models/store';
+import mongoose from 'mongoose';
 
 const getMyStore = async (req: Request, res: Response) => {
   try {
     const store = await Store.findOne({ user: req.userId });
+
     if (!store) {
-      return res.status(404).json({ message: "Prodavnica nije nađena." });
+      return res.status(404).json({ message: "Prodavnica nije pronađena." });
     }
+
     res.json(store);
   } catch (error) {
     console.log("error", error);
@@ -31,6 +27,7 @@ const createMyStore = async (req: Request, res: Response) => {
     if (existingStore) {
       return res.status(409).json({ message: 'Prodavnica je već registrovana.' });
     }
+
     const imageUrl = await uploadImage(req.file as Express.Multer.File);
 
     const store = new Store({
@@ -43,7 +40,6 @@ const createMyStore = async (req: Request, res: Response) => {
     await store.save();
 
     res.status(201).send(store);
-
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: 'Nešto nije u redu.' });
@@ -75,6 +71,7 @@ const updateMyStore = async (req: Request, res: Response) => {
     }
 
     await store.save();
+
     res.status(200).send(store);
   } catch (error) {
     console.log("error", error);
@@ -85,6 +82,7 @@ const updateMyStore = async (req: Request, res: Response) => {
 const getMyStoreOrders = async (req: Request, res: Response) => {
   try {
     const store = await Store.findOne({ user: req.userId });
+
     if (!store) {
       return res.status(404).json({ message: "eProdavnica nije nađena." });
     }
@@ -104,6 +102,7 @@ const updateOrderStatus = async (req: Request, res: Response) => {
     const { status } = req.body;
 
     const order = await Order.findById(orderId);
+
     if (!order) {
       return res.status(404).json({ message: "Narudžba nije pronađena." });
     }
